@@ -1,0 +1,33 @@
+name: Scan Fast
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run scanner (fast mode)
+        run: node src/scan.js --mode=fast
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          TWELVE_DATA_KEY: ${{ secrets.TWELVE_DATA_KEY }}
+          RESEND_KEY: ${{ secrets.RESEND_KEY }}
+          GROQ_KEY: ${{ secrets.GROQ_KEY }}
+          MY_EMAIL: ${{ secrets.MY_EMAIL }}
