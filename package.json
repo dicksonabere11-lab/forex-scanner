@@ -1,0 +1,18 @@
+{
+  "name": "forex-scanner",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Personal forex signal scanner",
+  "scripts": {
+    "scan": "node src/scan.js",
+    "scan:fast": "node src/scan.js --mode=fast",
+    "scan:slow": "node src/scan.js --mode=slow",
+    "digest": "node src/digest.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
