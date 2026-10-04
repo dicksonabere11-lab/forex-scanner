@@ -219,7 +219,7 @@ async function checkOpenSignals(instruments) {
 async function main() {
   const mode = parseMode();
   console.log(`[scan] mode=${mode} at ${new Date().toISOString()}`);
-  if (isWeekend()) {
+  if  (isWeekend() && !process.argv.includes('--force')) {
     console.log('[scan] weekend — skipping');
     return;
   }
