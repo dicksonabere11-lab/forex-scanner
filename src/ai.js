@@ -3,11 +3,22 @@
 
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL = 'llama-3.3-70b-versatile';
+const TIMEOUT_MS = 15000;
+
+function fetchWithTimeout(url, options) {
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timed out')), TIMEOUT_MS)
+    ),
+  ]);
+}
 
 async function askGroq(systemPrompt, userPrompt, maxTokens = 300) {
   const key = process.env.GROQ_KEY;
   if (!key) throw new Error('Missing GROQ_KEY');
-  const res = await fetch(GROQ_URL, {
+
+  const res = await fetchWithTimeout(GROQ_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -23,6 +34,7 @@ async function askGroq(systemPrompt, userPrompt, maxTokens = 300) {
       max_tokens: maxTokens,
     }),
   });
+
   if (!res.ok) {
     const body = await res.text();
     throw new Error(`Groq failed: ${res.status} ${body}`);
