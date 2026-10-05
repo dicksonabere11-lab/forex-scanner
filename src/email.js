@@ -2,11 +2,21 @@
 // Sends emails via Resend.
 
 const RESEND_URL = 'https://api.resend.com/emails';
+const TIMEOUT_MS = 15000;
+
+function fetchWithTimeout(url, options) {
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timed out')), TIMEOUT_MS)
+    ),
+  ]);
+}
 
 async function sendEmail({ to, subject, html, from }) {
   const key = process.env.RESEND_KEY;
   if (!key) throw new Error('Missing RESEND_KEY');
-  const res = await fetch(RESEND_URL, {
+  const res = await fetchWithTimeout(RESEND_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -104,4 +114,4 @@ export async function sendDigestEmail(subject, body) {
   </div>
   `;
   return sendEmail({ to, subject, html });
-        }
+    }
